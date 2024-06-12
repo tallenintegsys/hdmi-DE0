@@ -21,7 +21,7 @@ syn:
 	$(EDA) --read_settings_files=off --write_settings_files=off hdmi-DE0 -c hdmi-DE0
 
 pgm:
-	$(PGM) -c 1 --mode=JTAG -o 'p;output_files/hdmi-DE0.sof'
+	$(PGM) -c 1 --mode=JTAG -o 'p;hdmi-DE0.sof'
 
 clean:
 	rm -f *.vcd a.out
