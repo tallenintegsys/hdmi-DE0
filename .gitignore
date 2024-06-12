@@ -7,4 +7,12 @@ simulation/
 db/
 *.vcd
 xlat
-trash
+#Quartus detritus
+*.rpt
+*.done
+*.smsg
+*.summary
+*.sof
+*.sld
+*.pin
+*.jdi
