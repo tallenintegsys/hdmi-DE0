@@ -23,6 +23,9 @@ syn:
 pgm:
 	$(PGM) -c 1 --mode=JTAG -o 'p;hdmi-DE0.sof'
 
+verilator:
+	verilator --lint-only -Iverilog verilog/usb_annunciator.v
+
 clean:
 	rm -f *.vcd a.out
 

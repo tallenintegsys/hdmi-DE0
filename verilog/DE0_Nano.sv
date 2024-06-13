@@ -4,42 +4,42 @@
 //=======================================================
 
 module DE0_Nano(
-	//////////// CLOCK //////////
-	input                      CLOCK_50,
-	//////////// LED //////////
-	output		     [7:0]		LED,
-	////////// KEY SWITCHES
-	input 		     [1:0]		KEY,
-	input 		     [3:0]		SW,
-	//////////// SDRAM //////////
-	output		    [12:0]		DRAM_ADDR,
-	output		     [1:0]		DRAM_BA,
-	output		          		DRAM_CAS_N,
-	output		          		DRAM_CKE,
-	output		          		DRAM_CLK,
-	output		          		DRAM_CS_N,
-	inout 		    [15:0]		DRAM_DQ,
-	output		     [1:0]		DRAM_DQM,
-	output		          		DRAM_RAS_N,
-	output		          		DRAM_WE_N,
-	//////////// EPCS //////////
-	output		          		EPCS_ASDO,
-	input 		          		EPCS_DATA0,
-	output		          		EPCS_DCLK,
-	output		          		EPCS_NCSO,
-	//////////// Accelerometer and EEPROM //////////
-	output		          		G_SENSOR_CS_N,
-	input 		          		G_SENSOR_INT,
-	output		          		I2C_SCLK,
-	inout 		          		I2C_SDAT,
-	//////////// ADC //////////
-	output		          		ADC_CS_N,
-	output		          		ADC_SADDR,
-	output		          		ADC_SCLK,
-	input 		          		ADC_SDAT,
-	//////////// 2x13 GPIO Header //////////
-	output		     [2:0]		HDMI_OUT,
-	output			            HDMI_CLK);
+    //////////// CLOCK //////////
+    input                      CLOCK_50,
+    //////////// LED //////////
+    output           [7:0]      LED,
+    ////////// KEY SWITCHES
+    input            [1:0]      KEY,
+    input            [3:0]      SW,
+    //////////// SDRAM //////////
+    output          [12:0]      DRAM_ADDR,
+    output           [1:0]      DRAM_BA,
+    output                      DRAM_CAS_N,
+    output                      DRAM_CKE,
+    output                      DRAM_CLK,
+    output                      DRAM_CS_N,
+    inout           [15:0]      DRAM_DQ,
+    output           [1:0]      DRAM_DQM,
+    output                      DRAM_RAS_N,
+    output                      DRAM_WE_N,
+    //////////// EPCS //////////
+    output                      EPCS_ASDO,
+    input                       EPCS_DATA0,
+    output                      EPCS_DCLK,
+    output                      EPCS_NCSO,
+    //////////// Accelerometer and EEPROM //////////
+    output                      G_SENSOR_CS_N,
+    input                       G_SENSOR_INT,
+    output                      I2C_SCLK,
+    inout                       I2C_SDAT,
+    //////////// ADC //////////
+    output                      ADC_CS_N,
+    output                      ADC_SADDR,
+    output                      ADC_SCLK,
+    input                       ADC_SDAT,
+    //////////// 2x13 GPIO Header //////////
+    output           [2:0]      HDMI_OUT,
+    output                      HDMI_CLK);
 
 
 //=======================================================
@@ -51,8 +51,6 @@ module DE0_Nano(
 //  REG/WIRE declarations
 //=======================================================
 
-reg [34:0] counter;
-assign rgb = counter[34:11];
 
 //=======================================================
 //  Structural coding
@@ -75,8 +73,18 @@ assign audio_sample_word_dampened = audio_sample_word >> 9;
 
 logic [23:0] rgb;// = 24'd523700000000;
 logic [9:0] cx, cy;
-hdmi #(.VIDEO_ID_CODE(4), .AUDIO_RATE(AUDIO_RATE), .AUDIO_BIT_WIDTH(AUDIO_BIT_WIDTH)) hdmi(.clk_pixel_x5(clk_pixel_x5), .clk_pixel(clk_pixel),
- .clk_audio(clk_audio), .rgb(rgb), .audio_sample_word('{audio_sample_word_dampened, audio_sample_word_dampened}), .tmds(HDMI_OUT), .tmds_clock(HDMI_CLK), .cx(cx), .cy(cy));
+hdmi #( .VIDEO_ID_CODE(4),
+        .AUDIO_RATE(AUDIO_RATE),
+        .AUDIO_BIT_WIDTH(AUDIO_BIT_WIDTH))
+        hdmi(.clk_pixel_x5(clk_pixel_x5),
+             .clk_pixel(clk_pixel),
+             .clk_audio(clk_audio),
+             .rgb(rgb),
+             .audio_sample_word('{audio_sample_word_dampened, audio_sample_word_dampened}),
+             .tmds(HDMI_OUT),
+             .tmds_clock(HDMI_CLK),
+             .cx(cx),
+             .cy(cy));
 
 logic [7:0] character = 8'h30;
 logic [5:0] prevcy = 6'd0;
@@ -93,9 +101,13 @@ begin
         prevcy <= cy[9:4];
     end
 end
-always @(posedge CLOCK_50) begin
-counter <= counter + 1;
-end
+
+LFSR #(.NUM_BITS(24)) LSFR (
+   .i_Clk(CLOCK_50),
+   .i_Enable(1),
+   .o_LFSR_Data(rgb)
+   );
+
 //console console(.clk_pixel(clk_pixel), .codepoint(character), .attribute({cx[9], cy[8:6], cx[8:5]}), .cx(cx), .cy(cy), .rgb(rgb));
 
 endmodule
