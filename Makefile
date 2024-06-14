@@ -30,4 +30,4 @@ clean:
 	rm -f *.vcd a.out
 
 distclean:
-	rm -rf *.vcd a.out db incremental_db output_files simulation *.rpt *.sof *. *.summary *.jdi *.sld *.smsg *.pin
+	rm -rf *.vcd a.out db incremental_db output_files simulation *.rpt *.sof *. *.summary *.jdi *.sld *.smsg *.pin *.qws *.py
